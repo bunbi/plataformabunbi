@@ -19,6 +19,7 @@ app.use(passport.initialize());
 
 //rutas
 app.use("/api", require("./routes/index"));
+app.use("/api", require("./routes/Registro"));
 //errors
 
 app.use(customMdw.errorHandler);

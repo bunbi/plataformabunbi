@@ -8,14 +8,15 @@ const UserSchema = new Schema({
   rfc: { type: String, required: true },
   email: { type: String, required: true },
   telefono: { type: String, required: true },
-  estado: { type: String, required: true },
-  municipio: { type: String, required: true },
-  colonia: { type: String, required: true },
-  calle: { type: String, required: true },
-  numero: { type: String, required: true },
+  estado: { type: String, default: "" },
+  municipio: { type: String, default: "" },
+  colonia: { type: String, default: "" },
+  calle: { type: String, default: "" },
+  numero: { type: String, default: "" },
   password: { type: String, required: true },
   paid: { type: Boolean, default: true },
-  check: { type: Boolean, default: true }
+  check: { type: Boolean, default: true },
+  sector: { type: String, default: "" }
 });
 
 UserSchema.methods.encryptPassword = async password => {
