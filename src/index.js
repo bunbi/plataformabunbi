@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 //rutas
-app.use("/api", require("./routes/index"));
+app.use(require("./routes/index"));
 app.use("/api", require("./routes/Registro"));
 //errors
 
