@@ -13,10 +13,12 @@ router.post("/registrar", async (req, res) => {
     confirm,
     date
   } = req.body;
+
   let Register = new ClassRegister();
   let respuesta = await Register.validPassword(password, confirm);
   if (respuesta.error) {
     responder(respuesta);
+    return false;
   }
   let valida = await Register.validar(
     razon,
@@ -28,26 +30,29 @@ router.post("/registrar", async (req, res) => {
   );
   if (valida.error) {
     responder(valida);
+    return false;
   }
   let comprobar = await Register.igual(correo, rfc);
   if (comprobar.error) {
     responder(comprobar);
+    return false;
   } else {
     let sav = await Register.guardar(
       razon,
-      email,
-      telefono,
+      correo,
+      celular,
       sector,
       rfc,
       password,
       date
     );
     responder(sav);
+    return false;
   }
 
-  const responder = data => {
+  function responder(data) {
     res.json(data);
-  };
+  }
 });
 
 module.exports = router;

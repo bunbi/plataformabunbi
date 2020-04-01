@@ -39,7 +39,7 @@ class Register {
   }
   valRfc(rfc) {
     var re = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
-    return re.test(String(rfc).toLowerCase());
+    return re.test(String(rfc).toUpperCase());
   }
 
   async igual(email, rfc) {
@@ -52,14 +52,15 @@ class Register {
 
   async guardar(razon, email, telefono, sector, rfc, password, date) {
     try {
-      const newUser = new User(razon, rfc, email, telefono);
+      const newUser = new User({ razon, rfc, email, telefono });
       newUser.password = await newUser.encryptPassword(password);
       newUser.sector = sector;
       await newUser.save();
-      let res = this.recuperar(email);
+      let res = await this.recuperar(email);
       this.image(res, date);
       return { error: false, msg: "Registro completado" };
     } catch (e) {
+      console.log(e);
       return { error: true, msg: "Error al registrar" };
     }
   }

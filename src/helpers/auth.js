@@ -35,10 +35,6 @@ let middlewares = {
     else next();
   },
 
-  /*
-    Este middleware va al final de todos los middleware y rutas.
-    middleware para manejar notFound
-    */
   notFoundHandler: (req, res, next) => {
     res.status(404).json({ error: "no encontrado" });
   }

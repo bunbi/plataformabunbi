@@ -12,13 +12,23 @@ require("./config/passport");
 app.set("port", process.env.PORT);
 app.set("json spaces", 2);
 //middlewares
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.header("Allow", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
+});
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
 //rutas
-app.use(require("./routes/index"));
+app.use("/api", require("./routes/index"));
 app.use("/api", require("./routes/Registro"));
 //errors
 
