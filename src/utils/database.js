@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const { USER_DB, PASSWORD_DB, CONFI_CLUSTER } = process.env;
-const uri = `mongodb+srv://${USER_DB}:${PASSWORD_DB}@cluster${CONFI_CLUSTER}`;
+const { DATABASECLUSTER, URL_LOCAL } = process.env;
+const uri = `${DATABASECLUSTER}`;
 
 mongoose
   .connect(uri, {
@@ -10,5 +10,5 @@ mongoose
     useUnifiedTopology: true
   })
 
-  .then(db => console.log(`Conexion a ${process.env.USER_DB} exitosa`))
+  .then(db => console.log(`Conexión a ${process.env.URL_LOCAL} exítosa. `))
   .catch(err => console.error(err));
