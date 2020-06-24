@@ -86,7 +86,7 @@ router.get('/market/public/:id', async (req, res) => {
     res.json({ error: false, imagPublic, atencion, pablic })
   } catch (e) {
     console.log(e);
-    res.json({ error: true, msg: 'Error del servidor' })
+    res.json({ error: true, msg: 'Error en el servidor' })
   }
 })
 module.exports = router;

@@ -58,7 +58,7 @@ router.post('/update/public/info', customMdw.ensureAuthenticated, async (req, re
         console.log(e);
         res.json({
             error: true,
-            msg: 'Error del servidor'
+            msg: 'Error en el servidor'
         })
     }
 })
@@ -113,7 +113,7 @@ router.put('/update/infopublic/:id', customMdw.ensureAuthenticated, async (req, 
         }
     } catch (er) {
         console.log(er);
-        res.json({ error: true, msg: 'Error del servidor' })
+        res.json({ error: true, msg: 'Error en el servidor' })
     }
 })
 module.exports = router;

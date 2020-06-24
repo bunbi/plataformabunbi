@@ -42,7 +42,7 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
                     public: result.public_id
                 });
                 await fs.unlink(req.file.path);
-                res.json({ error: false, msg: "Imagen actualizada con exito" });
+                res.json({ error: false, msg: "Imagen actualizada con éxito" });
                 return false;
             } else {
                 var name = obtenerimagen.public;
@@ -54,13 +54,13 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
                     asset: result.asset_id
                 });
                 await fs.unlink(req.file.path);
-                res.json({ error: false, msg: "Imagen actualizada con exito" });
+                res.json({ error: false, msg: "Imagen actualizada con éxito" });
             }
         }
     } catch (error) {
         console.log(error);
         await fs.unlink(req.file.path);
-        res.json({ error: true, msg: "error del servidor" })
+        res.json({ error: true, msg: "error en el servidor" })
     }
 })
 
@@ -108,7 +108,7 @@ router.put('/update/publicImage/:id', customMdw.ensureAuthenticated, async (req,
         const esta = await PublicImage.findOne({ user: req.user.id });
         if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".JPEG" && ext != ".JPG" && ext != ".PNG") {
             await fs.unlink(req.file.path);
-            res.json({ error: true, msg: "Formato no valido" });
+            res.json({ error: true, msg: "Formato no válido" });
             return false;
         } else if (size > 2000000) {
             await fs.unlink(req.file.path);
@@ -129,12 +129,12 @@ router.put('/update/publicImage/:id', customMdw.ensureAuthenticated, async (req,
 
             await fs.unlink(req.file.path);
             await Location.updateOne({ user: req.user.id }, { image: result.url });
-            res.json({ error: false, msg: "Imagen actualizada con exito" });
+            res.json({ error: false, msg: "Imagen actualizada con éxito" });
         }
     } catch (error) {
         console.log(error);
         await fs.unlink(req.file.path);
-        res.json({ error: true, msg: "error del servidor" })
+        res.json({ error: true, msg: "error en el servidor" })
     }
 })
 module.exports = router;
