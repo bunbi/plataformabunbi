@@ -14,13 +14,13 @@ passport.use(
       console.log("callback para estrategia local");
       const user = await User.findOne({ email: email });
       if (!user) {
-        return done(null, false); //no existe
+        return done(null, false, { message: 'Usuario no encontrado' }); //no existe
       } else {
         const match = await user.matchPassword(password);
         if (match) {
           return done(null, user); //si existe el usuario
         } else {
-          return done(null, false); //el password no coincide
+          return done(null, false, { message: 'Password incorrecto' }); //el password no coincide
         }
       }
     }

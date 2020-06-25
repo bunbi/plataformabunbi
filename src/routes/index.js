@@ -9,6 +9,9 @@ const Imagen = require('../models/Image');
 const Contact = require('../models/ContactoMarket');
 const PublicImage = require('../models/PublicImage');
 const Horario = require('../models/Horario');
+
+
+
 router.get("/", (req, res) => {
   res.send("hola mundo");
 });
@@ -20,12 +23,12 @@ router.post("/login", function (req, res, next) {
     inf
   ) {
     if (error || !user) {
-      next(new error_types.Error404("email or password not correct"));
+      next(new error_types.Error404(inf.message));
     } else {
       console.log("generar token");
       const payload = {
         sub: user._id,
-        exp: Date.now() + parseInt(43200),
+        exp: Math.floor(Date.now() / 1000) + (86400),
         username: user.email
       };
       const { JWT_ALGORITHM, JWT_SECRET } = process.env;
