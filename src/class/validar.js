@@ -11,7 +11,7 @@ lib.valida = function (name, correo, telefono) {
         return { error: true, msg: "Llene los campos" }
     }
     if (!validateEmail(correo)) {
-        return { error: true, msg: "Ingrese un correo valido" }
+        return { error: true, msg: "Ingrese un correo válido" }
     }
     return {
         error: false
