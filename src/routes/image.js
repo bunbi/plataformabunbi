@@ -85,13 +85,13 @@ router.post('/upload/publicimg', customMdw.ensureAuthenticated, async (req, res)
                 filename: req.file.originalname,
                 ext: ext,
                 public: result.public_id,
-                url: result.url,
+                url: result.secure_url,
                 asset: result.asset_id
             });
             uploadPublic.user = req.user.id;
             await uploadPublic.save();
             await fs.unlink(req.file.path);
-            await Location.updateOne({ user: req.user.id }, { image: result.url });
+            await Location.updateOne({ user: req.user.id }, { image: result.secure_url });
             res.json({ error: false, msg: "Imagen actualizada con exito" });
         }
     } catch (error) {
@@ -123,12 +123,12 @@ router.put('/update/publicImage/:id', customMdw.ensureAuthenticated, async (req,
             await PublicImage.findByIdAndUpdate(req.params.id, {
                 filename: req.file.originalname,
                 ext: ext,
-                url: result.url,
+                url: result.secure_url,
                 asset: result.asset_id
             });
 
             await fs.unlink(req.file.path);
-            await Location.updateOne({ user: req.user.id }, { image: result.url });
+            await Location.updateOne({ user: req.user.id }, { image: result.secure_url });
             res.json({ error: false, msg: "Imagen actualizada con éxito" });
         }
     } catch (error) {
