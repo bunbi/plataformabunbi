@@ -89,25 +89,27 @@ router.put('/update/infopublic/:id', customMdw.ensureAuthenticated, async (req, 
                 web: social,
                 direccion: direct
             });
-            if (!busLocat) {
-                const newLoca = new Location({
-                    location: {
-                        coordinates: [log, lat]
-                    },
-                    less: less,
-                    title: name,
-                    user: req.user.id,
-                });
-                await newLoca.save();
-            } else {
-                await Location.findByIdAndUpdate(idLocation, {
-                    location: {
-                        type: 'Point',
-                        coordinates: [log, lat]
-                    },
-                    title: name,
-                    less: less,
-                });
+            if (lat || log) {
+                if (!busLocat) {
+                    const newLoca = new Location({
+                        location: {
+                            coordinates: [log, lat]
+                        },
+                        less: less,
+                        title: name,
+                        user: req.user.id,
+                    });
+                    await newLoca.save();
+                } else {
+                    await Location.findByIdAndUpdate(idLocation, {
+                        location: {
+                            type: 'Point',
+                            coordinates: [log, lat]
+                        },
+                        title: name,
+                        less: less,
+                    });
+                }
             }
             res.json({ error: false, msg: 'Datos actualizados' })
         }
