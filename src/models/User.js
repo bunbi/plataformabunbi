@@ -16,7 +16,8 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   paid: { type: Boolean, default: true },
   check: { type: Boolean, default: true },
-  sector: { type: String, default: "" }
+  sector: { type: String, default: "" },
+  verifi: { type: Boolean, default: true }
 });
 
 UserSchema.methods.encryptPassword = async password => {
@@ -25,7 +26,7 @@ UserSchema.methods.encryptPassword = async password => {
   return hash;
 };
 
-UserSchema.methods.matchPassword = async function(password) {
+UserSchema.methods.matchPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 

@@ -17,11 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/login", function (req, res, next) {
-  passport.authenticate("local", { session: false }, function (
-    error,
-    user,
-    inf
-  ) {
+  passport.authenticate("local", { session: false }, function (error, user, inf) {
     if (error || !user) {
       next(new error_types.Error404(inf.message));
     } else {
