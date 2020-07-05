@@ -55,6 +55,7 @@ router.get('/datauser', customMdw.ensureAuthenticated, async (req, res) => {
   }
 });
 
+
 router.post('/geolocalizacion/:page', async (req, res, next) => {
   const { lat, log } = req.body
   try {
@@ -87,7 +88,19 @@ router.get('/market/public/:id', async (req, res) => {
     console.log(e);
     res.json({ error: true, msg: 'Error en el servidor' })
   }
-})
+});
+
+router.get('/data/user/private', customMdw.ensureAuthenticated, async (req, res) => {
+  try {
+    let datos = {
+      email: req.user.email,
+      rfc: req.user.rfc
+    }
+    res.json({ error: false, data: datos });
+  } catch (error) {
+    res.json({ error: true, msg: "Error en la solicitud" });
+  }
+});
 module.exports = router;
 
 /*

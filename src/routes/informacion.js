@@ -10,7 +10,7 @@ const User = require('../models/User');
 const Codigo = require('../models/Codigos');
 //librerias
 const error_types = require("../helpers/error_types");
-const { validateEmail, sendEmai } = require('../utils/utils');
+const { validateEmail, sendEmai, validarRfc } = require('../utils/utils');
 const lib = require('../class/validar');
 const uid = require('uid');
 const jwt = require("jsonwebtoken");
@@ -269,9 +269,55 @@ router.put('/update/password', customMdw.ensureAuthenticated, async (req, res) =
     } catch (e) {
         res.json({ error: true, msg: 'Error al actualizar tu contraseña' })
     }
-})
+});
 
-router.get('/avr', async (req, res) => {
-    console.log(req.headers)
+router.put('/update/rfc', customMdw.ensureAuthenticated, async (req, res, next) => {
+    try {
+        const { password, email, nuevorfc } = req.body;
+
+        if (!password || !email || !nuevorfc) {
+            res.json({ error: true, msg: 'Campos vacios' });
+            return false;
+        } if (nuevorfc == req.user.rfc) {
+            res.json({ error: true, msg: 'El RFC no puede ser el mismo' });
+            return false;
+        }
+        if (!validateEmail(email)) {
+            res.json({ error: true, msg: 'Correo electronico no valido' });
+            return false;
+        } if (!validarRfc(nuevorfc)) {
+            res.json({ error: true, msg: 'RFC no valido' });
+            return false;
+        } else {
+            const verificar = await User.findOne({ rfc: nuevorfc });
+            if (verificar) {
+                res.json({ error: true, msg: 'RFC en uso' });
+                return false;
+            }
+            else {
+                passport.authenticate("local", { session: false }, async function (error, user, inf) {
+                    if (error || !user) {
+                        next(new error_types.Error404(inf.message));
+                    } else {
+                        await User.findByIdAndUpdate(req.user.id, {
+                            rfc: nuevorfc
+                        });
+
+                        const mensaje = `Su RFC para BUNBi y productos derivados cambio a ${nuevorfc}. 
+                        Si no solicito el cambio de RFC visite BUNBiplatform y en el panel actualize su contaseña y RFC`
+                        sendEmai(req.user.email, mensaje, `Cambio de RFC a ${nuevorfc} para BUNBi`);
+                        res.json({ error: false, msg: 'RFC actualizado con exito', text: 'Porfavor nuevamente inicie sesion' });
+                    }
+                })(req, res, next);
+            }
+        }
+    } catch (e) {
+        res.json({ error: true, msg: 'Error al actualizar el RFC' })
+    }
+});
+
+router.post('/avr', customMdw.ensureAuthenticated, async (req, res) => {
+    const { email, mensaje } = req.body;
+    sendEmai(email, mensaje, "test para enviar msg");
 })
 module.exports = router;
