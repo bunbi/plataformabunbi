@@ -263,7 +263,8 @@ router.put('/update/password', customMdw.ensureAuthenticated, async (req, res) =
             await User.findByIdAndUpdate(req.user.id, {
                 password: changePass.password
             });
-            sendEmai(req.user.email,)
+            const mensaje = "Su contraseña para acceso a BUNBi y productos derivados actualizo correctamente"
+            sendEmai(req.user.email, mensaje, "Actualización de contraseña BUNBi")
             res.json({ error: false, msg: 'Contraseña actualizada' });
         }
     } catch (e) {
