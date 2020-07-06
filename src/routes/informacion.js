@@ -134,7 +134,6 @@ router.put('/update/infopublic/:id', customMdw.ensureAuthenticated, async (req, 
 router.put('/update/email', customMdw.ensureAuthenticated, async (req, res, next) => {
     const { nuevoem, email, password } = req.body;
     try {
-        const comprobar = await User.findOne({ email: nuevoem });
         if (!nuevoem || !email || !password) {
             res.json({ error: true, msg: 'Ingrese los datos' });
             return false;
@@ -148,16 +147,19 @@ router.put('/update/email', customMdw.ensureAuthenticated, async (req, res, next
         if (email != req.user.email) {
             res.json({ error: true, msg: 'El correo electronico no coincide' });
             return false;
-        } if (comprobar) {
-            res.json({ error: true, msg: 'Correo electronico en uso' });
-            return false;
         } if (nuevoem === req.user.email) {
             res.json({ error: true, msg: 'El correo electronio es igual' });
             return false;
         }
         else {
+            const comprobar = await User.findOne({ email: nuevoem });
+            if (comprobar) {
+                res.json({ error: true, msg: 'Correo electronico en uso' });
+                return false;
+            }
             passport.authenticate("local", { session: false }, async function (error, user, inf) {
                 if (error || !user) {
+                    //res.json({ error: true, msg: inf.message })
                     next(new error_types.Error404(inf.message));
                 } else {
                     const payload = {
@@ -188,7 +190,7 @@ router.put('/update/email', customMdw.ensureAuthenticated, async (req, res, next
                     Si no solicito el cambio de correo electrónico visite el siguiente vínculo para restablecer su correo electrónico. 
                     ${process.env.HOSTRESEMAIL}/#/auth/recover/action?type=platform&email=${email}&chance=${nuevoem}&key=${token}`;
                     sendEmai(email, mensaje2, `Cambio de acceso de ${email} a ${nuevoem} para BUNBi`)
-                    res.json({ error: false, msg: 'Enviamos un email de verificación', text: 'Verifica tu correo electronico' });
+                    res.json({ error: false, msg: `Enviamos un email de verificación a ${nuevoem}`, text: 'Verifica tu correo electronico' });
                 }
             })(req, res, next);
         }
@@ -307,7 +309,7 @@ router.put('/update/rfc', customMdw.ensureAuthenticated, async (req, res, next) 
                         const mensaje = `Su RFC para BUNBi y productos derivados cambio a ${nuevorfc}. 
                         Si no solicito el cambio de RFC visite BUNBiplatform y en el panel actualize su contaseña y RFC`
                         sendEmai(req.user.email, mensaje, `Cambio de RFC a ${nuevorfc} para BUNBi`);
-                        res.json({ error: false, msg: 'RFC actualizado con exito', text: 'Porfavor nuevamente inicie sesion' });
+                        res.json({ error: false, msg: `RFC actualizado con exito a ${nuevorfc}`, text: 'Porfavor nuevamente inicie sesion' });
                     }
                 })(req, res, next);
             }
