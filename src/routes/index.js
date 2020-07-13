@@ -21,17 +21,21 @@ router.post("/login", function (req, res, next) {
     if (error || !user) {
       next(new error_types.Error404(inf.message));
     } else {
-      console.log("generar token");
-      const payload = {
-        sub: user._id,
-        exp: Math.floor(Date.now() / 1000) + (86400),
-        username: user.email
-      };
-      const { JWT_ALGORITHM, JWT_SECRET } = process.env;
-      const token = jwt.sign(JSON.stringify(payload), JWT_SECRET, {
-        algorithm: JWT_ALGORITHM
-      });
-      res.json({ data: { token: token } });
+      if (user.verifi) {
+        const payload = {
+          sub: user._id,
+          exp: Math.floor(Date.now() / 1000) + (86400),
+          username: user.email
+        };
+        const { JWT_ALGORITHM, JWT_SECRET } = process.env;
+        const token = jwt.sign(JSON.stringify(payload), JWT_SECRET, {
+          algorithm: JWT_ALGORITHM
+        });
+        res.json({ data: { token: token }, verifi: user.verifi });
+      } else {
+        res.json({ data: null, verifi: user.verifi });
+      }
+
     }
   })(req, res, next);
 });
@@ -50,8 +54,8 @@ router.get('/datauser', customMdw.ensureAuthenticated, async (req, res) => {
     }
     res.json({ data: data, image: img, error: false, public: conts, publicimg: pubimg });
   } catch (error) {
-    console.log(error);
-    res.json({ error: true, msg: 'error del servidor' })
+
+    res.json({ error: true, msg: 'Ocurrió un error con el servidor' })
   }
 });
 
@@ -59,21 +63,25 @@ router.get('/datauser', customMdw.ensureAuthenticated, async (req, res) => {
 router.post('/geolocalizacion/:page', async (req, res, next) => {
   const { lat, log } = req.body
   try {
-    var query = await Location.find({
-      location: {
-        $nearSphere: {
-          $geometry: {
-            type: "Point",
-            coordinates: [log, lat]
-          },
-          $maxDistance: 23000
+    if (!lat || !log) {
+      res.json({ error: true, msg: 'Active su ubicación' })
+    } else {
+      var query = await Location.find({
+        location: {
+          $nearSphere: {
+            $geometry: {
+              type: "Point",
+              coordinates: [log, lat]
+            },
+            $maxDistance: 23000
+          }
         }
-      }
-    });
-    res.json({ error: false, query })
+      });
+      res.json({ error: false, query })
+    }
   } catch (er) {
     console.log(er);
-    res.json({ error: true, msg: 'Error del servidor' })
+    res.json({ error: true, msg: 'Ocurrió un error con el servidor' })
   }
 });
 
@@ -86,7 +94,7 @@ router.get('/market/public/:id', async (req, res) => {
     res.json({ error: false, imagPublic, atencion, pablic })
   } catch (e) {
     console.log(e);
-    res.json({ error: true, msg: 'Error en el servidor' })
+    res.json({ error: true, msg: 'Ocurrió un error con el servidor' })
   }
 });
 
@@ -98,7 +106,7 @@ router.get('/data/user/private', customMdw.ensureAuthenticated, async (req, res)
     }
     res.json({ error: false, data: datos });
   } catch (error) {
-    res.json({ error: true, msg: "Error en la solicitud" });
+    res.json({ error: true, msg: "Ocurrió un error con el servidor" });
   }
 });
 module.exports = router;

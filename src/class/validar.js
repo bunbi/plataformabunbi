@@ -8,7 +8,7 @@ function validateEmail(email) {
 
 lib.valida = function (name, correo, telefono) {
     if (!name || !correo || !telefono) {
-        return { error: true, msg: "Llene los campos" }
+        return { error: true, msg: "Llene todos los campos" }
     }
     if (!validateEmail(correo)) {
         return { error: true, msg: "Ingrese un correo válido" }

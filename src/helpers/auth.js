@@ -4,7 +4,6 @@ const error_types = require("./error_types");
 let middlewares = {
   ensureAuthenticated: (req, res, next) => {
     passport.authenticate("jwt", { session: false }, (err, user, info) => {
-      console.log("ejecutando  authenticate para estrategia jwt");
       if (info) {
         return next(new error_types.Error401(info.message));
       }
@@ -19,7 +18,6 @@ let middlewares = {
     })(req, res, next);
   },
   errorHandler: (error, req, res, next) => {
-    console.log("ejecutando middleware control de errores");
     if (error instanceof error_types.InfoError)
       res.status(200).json({ error: error.message });
     else if (error instanceof error_types.Error404)

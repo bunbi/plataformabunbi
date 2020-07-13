@@ -14,24 +14,6 @@ const { validateEmail, sendEmai, validarRfc } = require('../utils/utils');
 const lib = require('../class/validar');
 const uid = require('uid');
 const jwt = require("jsonwebtoken");
-/*
-const userID = ['5ec48fbacfa7c02d981edcd2', "5e829b49bdcb0546d42e531d", "5e961c4737302a3cf02b474a", "5e962a1774a07528301364b1", "5eb09e06ea1ffa35ac9621f0", "5ebdf70687e7123fe87c2d9b", "5ebed7ff0e0f7c3fa0b45408", "5ebeda910e0f7c3fa0b4540e", "5e4c76548bd8bb06c835b1c9"];
-const coor = [[-98.10382179999999, 19.432231599999998], [-97.795068, 19.433503], [-97.821077, 19.399470], [-97.785801, 19.454153], [-97.918409, 19.307770], [-98.141548, 19.409818], [-106.158821, 25.218195], [-107.183497, 40.088857], [-98.10382179999999, 19.432231599999998]]
-
-for (let i = 0; i < userID.length; i++) {
-    let newLocal = new Location({
-        user: userID[i],
-        location: {
-            coordinates: coor[i]
-        }
-    });
-    newLocal.save((err, message) => {
-        if (err) console.log(err);
-        console.log(message);
-    });
-}*/
-
-
 
 router.post('/update/public/info', customMdw.ensureAuthenticated, async (req, res) => {
     const { name, correo, tipe, red, social, telefono } = req.body;
@@ -46,7 +28,7 @@ router.post('/update/public/info', customMdw.ensureAuthenticated, async (req, re
             })
             return false;
         } else if ((red && !tipe) || (!red && tipe)) {
-            res.json({ error: true, msg: 'Ingrese una red' })
+            res.json({ error: true, msg: 'Ingrese un tipo de red' })
             return false;
         }
         const newCont = new Contacto({
@@ -63,12 +45,12 @@ router.post('/update/public/info', customMdw.ensureAuthenticated, async (req, re
         newCont.user = id;
         await newCont.save();
         await Location.updateOne({ user: req.user.id }, { title: name });
-        res.json({ error: false, msg: "Datos guardados" })
+        res.json({ error: false, msg: "Datos guardados con éxito " })
     } catch (e) {
         console.log(e);
         res.json({
             error: true,
-            msg: 'Error en el servidor'
+            msg: 'Ocurrió un error con el servidor'
         })
     }
 })
@@ -85,7 +67,7 @@ router.put('/update/infopublic/:id', customMdw.ensureAuthenticated, async (req, 
             res.json({ error: true, msg: val.msg })
             return false;
         } else if ((red && !tipe) || (!red && tipe)) {
-            res.json({ error: true, msg: 'Ingrese una red' })
+            res.json({ error: true, msg: 'Ingrese un tipo de red' })
             return false;
         } else {
             await Contacto.findByIdAndUpdate(req.params.id, {
@@ -121,11 +103,10 @@ router.put('/update/infopublic/:id', customMdw.ensureAuthenticated, async (req, 
                     });
                 }
             }
-            res.json({ error: false, msg: 'Datos actualizados' })
+            res.json({ error: false, msg: 'Datos actualizados con éxito' })
         }
     } catch (er) {
-        console.log(er);
-        res.json({ error: true, msg: 'Error en el servidor' })
+        res.json({ error: true, msg: 'Ocurrió un error con el servidor' })
     }
 });
 /**
@@ -195,7 +176,7 @@ router.put('/update/email', customMdw.ensureAuthenticated, async (req, res, next
             })(req, res, next);
         }
     } catch (error) {
-        res.json({ error: true, msg: 'Error del servidor' })
+        res.json({ error: true, msg: 'Ocurrió un error con el servidor' })
     }
 });
 /**
@@ -208,17 +189,17 @@ router.put('/update/email/change/:email/:code/:tipe', async (req, res) => {
         updateEma = await Codigo.findOne({ codigo: code }, { tipe });
         const info = await User.findOne({ email: email });
         if (!updateEma) {
-            res.json({ error: true, msg: 'La solicitud de verificación de tu correo electrónico caducó o ya se usó el vínculo' });
+            res.json({ error: true, msg: 'La solicitud de verificación de su correo electrónico caducó o ya se usó el vínculo' });
         } else {
             await User.findByIdAndUpdate(info._id, {
                 verifi: true
             });
             await Codigo.findByIdAndDelete(updateEma._id);
-            res.json({ error: false, msg: 'Se verificó tu correo electrónico' });
+            res.json({ error: false, msg: 'Se verificó su correo electrónico' });
         }
     } catch (e) {
         await Codigo.findByIdAndDelete(updateEma._id);
-        res.json({ error: true, msg: 'Error al actualizar tu correo electronico' })
+        res.json({ error: true, msg: 'Error al actualizar su correo electronico' })
     }
 });
 /**
@@ -229,7 +210,7 @@ router.put('/update/rescueme/email/:email/:remove', customMdw.ensureAuthenticate
         const info = await User.findOne({ email: req.params.email });
         const nuevaResta = await User.findOne({ email: req.params.remove });
         if (info) {
-            res.json({ error: true, msg: 'Error al actualizar tu correo electronico' })
+            res.json({ error: true, msg: 'Error al actualizar su correo electronico' })
             return false;
         } else {
             await User.findByIdAndUpdate(nuevaResta._id, {
@@ -239,7 +220,7 @@ router.put('/update/rescueme/email/:email/:remove', customMdw.ensureAuthenticate
             res.json({ error: false, msg: 'Correo electronico actualizado' })
         }
     } catch (e) {
-        res.json({ error: true, msg: 'Error al actualizar tu correo electronico' })
+        res.json({ error: true, msg: 'Error al actualizar su correo electronico' })
     }
 });
 
@@ -249,28 +230,28 @@ router.put('/update/password', customMdw.ensureAuthenticated, async (req, res) =
         const { actual, newpass, confirm } = req.body
         const user = await User.findOne({ _id: req.user.id });
         if (!actual || !newpass || !confirm) {
-            res.json({ error: true, msg: 'Campos vacios' });
+            res.json({ error: true, msg: 'No se permiten campos vacíos ' });
             return false;
         }
         if (newpass != confirm) {
-            res.json({ error: true, msg: 'Las contraseñas no coinciden' });
+            res.json({ error: true, msg: 'Su contraseña no coincide ' });
             return false;
         }
         const match = await user.matchPassword(actual)
         if (!match) {
-            res.json({ error: true, msg: 'Contraseña incorrecta' });
+            res.json({ error: true, msg: 'Su contraseña es incorrecta' });
         } else {
             const changePass = new User({});
             changePass.password = await changePass.encryptPassword(newpass);
             await User.findByIdAndUpdate(req.user.id, {
                 password: changePass.password
             });
-            const mensaje = "Su contraseña para acceso a BUNBi y productos derivados actualizo correctamente"
+            const mensaje = "Su contraseña para acceso a BUNBi y productos derivados actualizo correctamente "
             sendEmai(req.user.email, mensaje, "Actualización de contraseña BUNBi")
-            res.json({ error: false, msg: 'Contraseña actualizada' });
+            res.json({ error: false, msg: 'Contraseña actualizada correctamente ' });
         }
     } catch (e) {
-        res.json({ error: true, msg: 'Error al actualizar tu contraseña' })
+        res.json({ error: true, msg: 'Error al actualizar su contraseña' })
     }
 });
 
@@ -279,22 +260,22 @@ router.put('/update/rfc', customMdw.ensureAuthenticated, async (req, res, next) 
         const { password, email, nuevorfc } = req.body;
 
         if (!password || !email || !nuevorfc) {
-            res.json({ error: true, msg: 'Campos vacios' });
+            res.json({ error: true, msg: 'No se permiten campos vacíos' });
             return false;
         } if (nuevorfc == req.user.rfc) {
-            res.json({ error: true, msg: 'El RFC no puede ser el mismo' });
+            res.json({ error: true, msg: 'Para actualizar debe cambiar su RFC' });
             return false;
         }
         if (!validateEmail(email)) {
-            res.json({ error: true, msg: 'Correo electronico no valido' });
+            res.json({ error: true, msg: 'Su correo electrónico no es valido ' });
             return false;
         } if (!validarRfc(nuevorfc)) {
-            res.json({ error: true, msg: 'RFC no valido' });
+            res.json({ error: true, msg: 'Su RFC no es valido' });
             return false;
         } else {
             const verificar = await User.findOne({ rfc: nuevorfc });
             if (verificar) {
-                res.json({ error: true, msg: 'RFC en uso' });
+                res.json({ error: true, msg: 'Este RFC se encuentra en uso ' });
                 return false;
             }
             else {
@@ -306,16 +287,17 @@ router.put('/update/rfc', customMdw.ensureAuthenticated, async (req, res, next) 
                             rfc: nuevorfc
                         });
 
+
                         const mensaje = `Su RFC para BUNBi y productos derivados cambio a ${nuevorfc}. 
                         Si no solicito el cambio de RFC visite BUNBiplatform y en el panel actualize su contaseña y RFC`
                         sendEmai(req.user.email, mensaje, `Cambio de RFC a ${nuevorfc} para BUNBi`);
-                        res.json({ error: false, msg: `RFC actualizado con exito a ${nuevorfc}`, text: 'Porfavor nuevamente inicie sesion' });
+                        res.json({ error: false, msg: `RFC actualizado con exito a ${nuevorfc}`, text: 'Por favor reinicie su sesión' });
                     }
                 })(req, res, next);
             }
         }
     } catch (e) {
-        res.json({ error: true, msg: 'Error al actualizar el RFC' })
+        res.json({ error: true, msg: 'Error al actualizar su RFC' })
     }
 });
 

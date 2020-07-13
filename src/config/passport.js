@@ -11,7 +11,6 @@ passport.use(
       session: false
     },
     async (email, password, done) => {
-      console.log("callback para estrategia local");
       const user = await User.findOne({ email: email });
       if (!user) {
         return done(null, false, { message: 'Usuario no encontrado' }); //no existe
@@ -20,7 +19,7 @@ passport.use(
         if (match) {
           return done(null, user); //si existe el usuario
         } else {
-          return done(null, false, { message: 'Password incorrecto' }); //el password no coincide
+          return done(null, false, { message: 'Contraseña incorrecta' }); //el password no coincide
         }
       }
     }
@@ -34,7 +33,6 @@ opts.algorithms = process.env.JWT_ALGORITHM;
 
 passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    console.log("verificacion de estrategia jwt");
     User.findOne({ _id: jwt_payload.sub })
       .then(data => {
         if (data == null) {
