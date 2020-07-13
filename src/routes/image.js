@@ -21,7 +21,7 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
         const obtenerimagen = await Imagen.findOne({ user: req.user.id });
         if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".JPEG" && ext != ".JPG" && ext != ".PNG") {
             await fs.unlink(req.file.path);
-            res.json({ error: true, msg: "Formato no valido" });
+            res.json({ error: true, msg: "Formato de imagen no válido " });
             return false;
         } else if (size > 1000000) {
             await fs.unlink(req.file.path);
@@ -31,8 +31,6 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
             });
         } else {
             if (obtenerimagen.filename == "camara.jpg") {
-                console.log('aqui no');
-
                 const result = await cloudinary.v2.uploader.upload(req.file.path)
                 await Imagen.findByIdAndUpdate(req.params.id, {
                     filename: req.file.originalname,
@@ -60,7 +58,7 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
     } catch (error) {
         console.log(error);
         await fs.unlink(req.file.path);
-        res.json({ error: true, msg: "error en el servidor" })
+        res.json({ error: true, msg: "Ocurrió un error con el servidor " })
     }
 })
 
@@ -70,7 +68,7 @@ router.post('/upload/publicimg', customMdw.ensureAuthenticated, async (req, res)
         const size = req.file.size;
         if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".JPEG" && ext != ".JPG" && ext != ".PNG") {
             await fs.unlink(req.file.path);
-            res.json({ error: true, msg: "Formato no valido" });
+            res.json({ error: true, msg: "Formato de imagen no válido" });
             return false;
         } else if (size > 2000000) {
             await fs.unlink(req.file.path);
@@ -92,12 +90,11 @@ router.post('/upload/publicimg', customMdw.ensureAuthenticated, async (req, res)
             await uploadPublic.save();
             await fs.unlink(req.file.path);
             await Location.updateOne({ user: req.user.id }, { image: result.secure_url });
-            res.json({ error: false, msg: "Imagen actualizada con exito" });
+            res.json({ error: false, msg: "Imagen actualizada con éxito" });
         }
     } catch (error) {
-        console.log(error);
         await fs.unlink(req.file.path);
-        res.json({ error: true, msg: "error del servidor" })
+        res.json({ error: true, msg: "Ocurrió un error con el servidor " })
     }
 });
 
@@ -108,7 +105,7 @@ router.put('/update/publicImage/:id', customMdw.ensureAuthenticated, async (req,
         const esta = await PublicImage.findOne({ user: req.user.id });
         if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".JPEG" && ext != ".JPG" && ext != ".PNG") {
             await fs.unlink(req.file.path);
-            res.json({ error: true, msg: "Formato no válido" });
+            res.json({ error: true, msg: "Formato de imagen no válido" });
             return false;
         } else if (size > 2000000) {
             await fs.unlink(req.file.path);
@@ -132,9 +129,8 @@ router.put('/update/publicImage/:id', customMdw.ensureAuthenticated, async (req,
             res.json({ error: false, msg: "Imagen actualizada con éxito" });
         }
     } catch (error) {
-        console.log(error);
         await fs.unlink(req.file.path);
-        res.json({ error: true, msg: "error en el servidor" })
+        res.json({ error: true, msg: "Ocurrió un error con el servidor " })
     }
 })
 module.exports = router;

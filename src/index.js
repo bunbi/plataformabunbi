@@ -47,3 +47,10 @@ app.use(customMdw.notFoundHandler);
 app.listen(app.get("port"), () => {
   console.log("corriendo en el puerto ", app.get("port"));
 });
+
+/**
+ * REACT_APP_HOSTBACKEND
+https://bunbiapis.bunbi.com.mx
+REACT_APP_HOSTREDIRECT
+https://bunbicot.bunbi.com.mx/#/
+ */

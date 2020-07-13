@@ -7,7 +7,7 @@ router.post('/horarios/new', customMdw.ensureAuthenticated, async (req, res) => 
     const { data } = req.body;
     try {
         if (!data[0].open || !data[0].close) {
-            res.json({ error: true, msg: "Ingrese un dato" });
+            res.json({ error: true, msg: "Por favor ingrese un dato " });
             return false;
         }
         const newHora = new Horario({
@@ -16,10 +16,10 @@ router.post('/horarios/new', customMdw.ensureAuthenticated, async (req, res) => 
         });
 
         await newHora.save();
-        res.json({ error: false, msg: "Datos agregados" });
+        res.json({ error: false, msg: "Datos agregados con éxito" });
     } catch (er) {
         console.log(er);
-        res.json({ error: true, msg: "Error en el servidor" });
+        res.json({ error: true, msg: "Ocurrió un error en el servidor " });
     }
 
 });
@@ -28,17 +28,17 @@ router.put('/horarios/edit/:id', customMdw.ensureAuthenticated, async (req, res)
     const { data } = req.body;
     try {
         if (!data[0].open || !data[0].close) {
-            res.json({ error: true, msg: "Ingrese un dato" });
+            res.json({ error: true, msg: "Por favor ingrese un dato" });
             return false;
         }
 
         await Horario.findByIdAndUpdate(req.params.id, {
             diaPe: data
         });
-        res.json({ error: false, msg: "Datos actualizados" });
+        res.json({ error: false, msg: "Datos actualizados con éxito " });
     } catch (er) {
         console.log(err);
-        res.json({ error: true, msg: "Error en el servidor" });
+        res.json({ error: true, msg: "Ocurrió un error en el servidor" });
     }
 })
 router.get('/horarios/obtener', customMdw.ensureAuthenticated, async (req, res) => {
@@ -47,7 +47,7 @@ router.get('/horarios/obtener', customMdw.ensureAuthenticated, async (req, res) 
         res.json({ error: false, obtenerHorario })
     } catch (err) {
         console.log(err);
-        res.json({ error: true, msg: "Error en el servidor" })
+        res.json({ error: true, msg: "Ocurrió un error en el servidor" })
     }
 });
 
