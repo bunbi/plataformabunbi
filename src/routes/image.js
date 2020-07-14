@@ -35,7 +35,7 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
                 await Imagen.findByIdAndUpdate(req.params.id, {
                     filename: req.file.originalname,
                     ext: ext,
-                    url: result.url,
+                    url: result.secure_url,
                     asset: result.asset_id,
                     public: result.public_id
                 });
@@ -48,7 +48,7 @@ router.put('/update/avatar/:id', customMdw.ensureAuthenticated, async (req, res)
                 await Imagen.findByIdAndUpdate(req.params.id, {
                     filename: req.file.originalname,
                     ext: ext,
-                    url: result.url,
+                    url: result.secure_url,
                     asset: result.asset_id
                 });
                 await fs.unlink(req.file.path);
