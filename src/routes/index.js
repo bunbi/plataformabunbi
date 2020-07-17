@@ -31,9 +31,9 @@ router.post("/login", function (req, res, next) {
         const token = jwt.sign(JSON.stringify(payload), JWT_SECRET, {
           algorithm: JWT_ALGORITHM
         });
-        res.json({ data: { token: token }, verifi: user.verifi });
+        res.json({ data: { token: token }, verifi: user.verifi, id_usuario: user._id, nombres: user.razon, email: user.email });
       } else {
-        res.json({ data: null, verifi: user.verifi });
+        res.json({ data: null, verifi: user.verifi, id_usuario: null, nombres: null, email: null });
       }
 
     }
